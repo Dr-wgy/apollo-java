@@ -10,6 +10,7 @@ Apollo Java 2.2.0
 * [Support concurrent loading of Config for different namespaces.](https://github.com/apolloconfig/apollo-java/pull/31)
 * [Fix snakeyaml 2.x compatibility issues](https://github.com/apolloconfig/apollo-java/pull/35)
 * [feat(openapi): create app](https://github.com/apolloconfig/apollo-java/pull/32)
+* [Support other data sources like spring cloud config initialize system properties](https://github.com/apolloconfig/apollo-java/pull/37)
 
 ------------------
 All issues and pull requests are [here](https://github.com/apolloconfig/apollo-java/milestone/2?closed=1)
