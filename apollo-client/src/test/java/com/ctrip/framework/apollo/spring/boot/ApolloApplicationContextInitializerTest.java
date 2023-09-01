@@ -44,8 +44,6 @@ public class ApolloApplicationContextInitializerTest {
 
   private ApolloApplicationContextInitializer apolloApplicationContextInitializer;
 
-  private ApplicationContextInitializer beForeApplicationContextInitializer;
-
   @Before
   public void setUp() throws Exception {
     apolloApplicationContextInitializer = new ApolloApplicationContextInitializer();
