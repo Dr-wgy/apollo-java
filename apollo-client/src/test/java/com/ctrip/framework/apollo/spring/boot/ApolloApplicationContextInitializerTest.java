@@ -30,16 +30,21 @@ import com.ctrip.framework.apollo.util.ConfigUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.StandardEnvironment;
 
+import java.util.Objects;
 import java.util.Properties;
 
 public class ApolloApplicationContextInitializerTest {
 
   private ApolloApplicationContextInitializer apolloApplicationContextInitializer;
+
+  private ApplicationContextInitializer beForeApplicationContextInitializer;
 
   @Before
   public void setUp() throws Exception {
@@ -169,5 +174,31 @@ public class ApolloApplicationContextInitializerTest {
 
     assertTrue(propertySources.contains(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME));
     assertEquals(propertySources.iterator().next().getName(), StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME);
+  }
+
+
+  //need to initialize system properties like app.id again in case they are configured in external data sources like spring cloud config
+  @Test
+  public void testBeforeApolloApplication() {
+    String appIdFromOtherDataSourceLikeSpringCloudConfig = "otherDatasourceBeforeApolloId";
+
+    ConfigurableApplicationContext configurableApplicationContext = mock(ConfigurableApplicationContext.class);
+    ConfigurableEnvironment environment = mock(ConfigurableEnvironment.class);
+
+    MutablePropertySources propertySources = new MutablePropertySources();
+    when(configurableApplicationContext.getEnvironment()).thenReturn(environment);
+    when(environment.getPropertySources()).thenReturn(propertySources);
+    when(environment.getProperty(PropertySourcesConstants.APOLLO_BOOTSTRAP_NAMESPACES,
+                                 ConfigConsts.NAMESPACE_APPLICATION)).thenReturn("");
+    when(environment.getProperty(ApolloClientSystemConsts.APP_ID)).thenReturn(appIdFromOtherDataSourceLikeSpringCloudConfig);
+    when(environment.getProperty(PropertySourcesConstants.APOLLO_BOOTSTRAP_ENABLED, Boolean.class, false)).thenReturn(true);
+    apolloApplicationContextInitializer.initialize(configurableApplicationContext);
+
+    assertTrue(Objects.equals(System.getProperty("app.id"),appIdFromOtherDataSourceLikeSpringCloudConfig));
+
+
+
+
+
   }
 }
